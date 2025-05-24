@@ -45,4 +45,16 @@ public class Espectaculo {
                 ", totalRecaudado=" + calcularRecaudacionTotal() +
                 '}';
     }
+
+    public static void validarDatos(String nombre) {
+        if (nombre == null || nombre.isEmpty()) {
+            throw new RuntimeException("Nombre inválido para el espectáculo");
+        }
+    }
+
+    public void validarFuncionNoRepetida(LocalDate fecha) {
+    if (funciones.containsKey(fecha)) {
+        throw new RuntimeException("Ya existe una función para esa fecha en el espectáculo");
+        }
+    }
 }

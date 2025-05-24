@@ -23,9 +23,7 @@ public class Ticketek implements ITicketek {
         if (sedes.containsKey(nombre)) {
             throw new RuntimeException("Sede ya registrada");
         }
-        if (nombre == null|| nombre.isEmpty() || direccion == null || direccion.isEmpty() || capacidadMaxima <= 0) { 
-            throw new RuntimeException("Datos inválidos");
-        }
+        Sede.validarDatos(nombre, direccion, capacidadMaxima);
         sedes.put(nombre, new Estadio(nombre, direccion, capacidadMaxima));
     }
 
@@ -34,9 +32,7 @@ public class Ticketek implements ITicketek {
         if (sedes.containsKey(nombre)) {
             throw new RuntimeException("Sede ya registrada");
         }
-        if(nombre == null || nombre.isEmpty() || direccion == null || direccion.isEmpty() || capacidadMaxima <= 0 || asientosPorFila <= 0 || sectores == null || sectores.length == 0 || capacidad == null || capacidad.length == 0 || porcentajeAdicional == null || porcentajeAdicional.length == 0){
-            throw new RuntimeException("Datos inválidos");
-        }
+        Sede.validarDatos(nombre, direccion, capacidadMaxima, asientosPorFila, sectores, capacidad, porcentajeAdicional);
         sedes.put(nombre, new Teatro(nombre, direccion, capacidadMaxima, asientosPorFila, sectores, capacidad, porcentajeAdicional));
     }
 
@@ -45,9 +41,7 @@ public class Ticketek implements ITicketek {
         if (sedes.containsKey(nombre)) {
             throw new RuntimeException("Sede ya registrada");
         }
-        if (nombre == null || nombre.isEmpty() || direccion == null || direccion.isEmpty() || capacidadMaxima <= 0 || asientosPorFila <= 0 || cantidadPuestos <= 0 || precioConsumicion <= 0 || sectores == null || sectores.length == 0 || capacidad == null || capacidad.length == 0 || porcentajeAdicional == null || porcentajeAdicional.length == 0) {
-            throw new RuntimeException("Datos inválidos");
-            }
+        Sede.validarDatos(nombre, direccion, capacidadMaxima, asientosPorFila, cantidadPuestos, precioConsumicion, sectores, capacidad, porcentajeAdicional);
         sedes.put(nombre, new MiniEstadio(nombre, direccion, capacidadMaxima, asientosPorFila, cantidadPuestos, precioConsumicion, sectores, capacidad, porcentajeAdicional));
     }
 
@@ -56,9 +50,7 @@ public class Ticketek implements ITicketek {
         if (usuarios.containsKey(email)) {
             throw new RuntimeException("Usuario ya registrado");
             }
-        if (email == null || email.isEmpty() || nombre == null || nombre.isEmpty() || apellido == null || apellido.isEmpty() || contrasenia == null || contrasenia.isEmpty()) {
-            throw new RuntimeException("Datos inválidos");
-            }
+        Usuario.validarDatos(email, nombre, apellido, contrasenia);
         usuarios.put(email, new Usuario(nombre, apellido, email, contrasenia));
     }
 
@@ -67,9 +59,7 @@ public class Ticketek implements ITicketek {
         if (espectaculos.containsKey(nombre)) {
             throw new RuntimeException("Espectáculo ya registrado");
         }
-        if (nombre == null || nombre.isEmpty()) {
-            throw new RuntimeException("Nombre inválido");
-        } 
+        Espectaculo.validarDatos(nombre);
         espectaculos.put(nombre, new Espectaculo(nombre));
     }
 
@@ -79,22 +69,14 @@ public class Ticketek implements ITicketek {
         if (espectaculo == null) {
             throw new RuntimeException("Espectáculo no encontrado");
         }
-        if (fecha == null || fecha.isEmpty() || sede == null || sede.isEmpty() || precioBase <= 0 || sede.length() < 3 || nombreEspectaculo.length() < 3) {
-            throw new RuntimeException("Datos inválidos");
-        }      
+        Funcion.validarDatos(nombreEspectaculo, fecha, sede, precioBase);
         LocalDate fechaFuncion = LocalDate.parse(fecha, dateFormatter);
         Sede sedeObj = sedes.get(sede);
         if (sedeObj == null) {
             throw new RuntimeException("Sede no encontrada");
         }
-        
-        if (sedeObj.fechaOcupada(fechaFuncion)) {
-            throw new RuntimeException("Fecha ocupada en la sede");
-        }
-        if (espectaculo.getFunciones().containsKey(fechaFuncion)) {
-            throw new RuntimeException("Ya existe una función para esa fecha en el espectáculo");
-        }
-        
+        sedeObj.validarDisponibleParaFuncion(fechaFuncion);
+        espectaculo.validarFuncionNoRepetida(fechaFuncion);
         Funcion funcion = new Funcion(fechaFuncion, sedeObj, precioBase, nombreEspectaculo);
         espectaculo.agregarFuncion(fechaFuncion, funcion);
         sedeObj.agregarFuncion(fechaFuncion, nombreEspectaculo);
@@ -106,9 +88,11 @@ public class Ticketek implements ITicketek {
         throw new RuntimeException("Datos inválidos");
     }
     Usuario usuario = usuarios.get(email);
-    if (usuario == null || !usuario.getContrasenia().equals(contrasenia)) {
-        throw new RuntimeException("Usuario o contraseña incorrectos");
+    if (usuario == null){
+        throw new RuntimeException("Usuario no encontrado");
     }
+    usuario.validarEmail(email);
+    usuario.validarContrasenia(contrasenia);
     Espectaculo espectaculo = espectaculos.get(nombreEspectaculo);
     if (espectaculo == null) {
         throw new RuntimeException("Espectáculo no encontrado");
@@ -119,9 +103,7 @@ public class Ticketek implements ITicketek {
         throw new RuntimeException("Función no encontrada");
     }
     Sede sede = sedes.get(funcion.getSede());
-    if (!(sede instanceof Estadio)) {
-        throw new RuntimeException("La sede no es un estadio (no numerada)");
-    }
+    sede.validarEsEstadio();
     List<IEntrada> entradasVendidas = new ArrayList<>();
     for (int i = 0; i < cantidadEntradas; i++) {
         String codigo = generarCodigoEntrada();
@@ -139,9 +121,11 @@ public class Ticketek implements ITicketek {
             throw new RuntimeException("Datos inválidos");
         }
         Usuario usuario = usuarios.get(email);
-        if (usuario == null || !usuario.getContrasenia().equals(contrasenia)) {
-            throw new RuntimeException("Usuario o contraseña incorrectos");
+        if (usuario == null){
+            throw new RuntimeException("Usuario no encontrado");
         }
+        usuario.validarEmail(email);
+        usuario.validarContrasenia(contrasenia);
         Espectaculo espectaculo = espectaculos.get(nombreEspectaculo);
         if (espectaculo == null) {
             throw new RuntimeException("Espectáculo no encontrado");
@@ -152,9 +136,7 @@ public class Ticketek implements ITicketek {
             throw new RuntimeException("Función no encontrada");
         }
         Sede sede = sedes.get(funcion.getSede());
-        if (!(sede instanceof Teatro) && !(sede instanceof MiniEstadio)) {
-            throw new RuntimeException("La sede no es numerada");
-        }
+        sede.validarEsNumerada();
         List<IEntrada> entradasVendidas = new ArrayList<>();
         for (int asiento : asientos) {
             if (!funcion.asientoDisponible(sector, asiento)) {
@@ -181,27 +163,7 @@ public class Ticketek implements ITicketek {
             Funcion funcion = espectaculo.getFunciones().get(fecha);
             Sede sede = sedes.get(funcion.getSede());
             String fechaStr = fecha.format(dateFormatter);
-            sb.append(" - (").append(fechaStr).append(") ").append(sede.getNombre()).append(" - ");
-            if (sede instanceof Estadio estadio) {
-                int entradasVendidas = funcion.getEntradasVendidas();
-                sb.append(entradasVendidas).append("/").append(estadio.getCapacidadMaxima());
-            } else if (sede instanceof Teatro teatro) {
-                String[] sectores = teatro.getSectores();
-                int[] capacidades = teatro.getCapacidadSectores();
-                for (int i = 0; i < sectores.length; i++) {
-                    int vendidas = funcion.getEntradasVendidasPorSector(sectores[i]);
-                    sb.append(sectores[i]).append(": ").append(vendidas).append("/").append(capacidades[i]);
-                    if (i < sectores.length - 1) sb.append(" | ");
-                }
-            } else if (sede instanceof MiniEstadio mini) {
-                String[] sectores = mini.getSectores();
-                int[] capacidades = mini.getCapacidadSectores();
-                for (int i = 0; i < sectores.length; i++) {
-                    int vendidas = funcion.getEntradasVendidasPorSector(sectores[i]);
-                    sb.append(sectores[i]).append(": ").append(vendidas).append("/").append(capacidades[i]);
-                    if (i < sectores.length - 1) sb.append(" | ");
-                }
-            }
+            sb.append(funcion.descripcionParaListado(sede, fechaStr));
             sb.append("\n");
         }
         return sb.toString();
@@ -223,7 +185,8 @@ public class Ticketek implements ITicketek {
     @Override
     public List<IEntrada> listarEntradasFuturas(String email, String contrasenia) {
         Usuario usuario = usuarios.get(email);
-        if (usuario == null || !usuario.getContrasenia().equals(contrasenia)) throw new RuntimeException("Usuario o contraseña incorrectos");
+        usuario.validarEmail(email);
+        usuario.validarContrasenia(contrasenia);
         List<IEntrada> futuras = new ArrayList<>();
         LocalDate hoy = LocalDate.now();
         for (Entrada entrada : usuario.getEntradas().values()) {
@@ -237,7 +200,9 @@ public class Ticketek implements ITicketek {
     @Override
     public List<IEntrada> listarTodasLasEntradasDelUsuario(String email, String contrasenia) {
         Usuario usuario = usuarios.get(email);
-        if (usuario == null || !usuario.getContrasenia().equals(contrasenia)) throw new RuntimeException("Usuario o contraseña incorrectos");
+        if (usuario == null) throw new RuntimeException("Usuario no encontrado");
+        usuario.validarEmail(email);
+        usuario.validarContrasenia(contrasenia);
         return new ArrayList<>(usuario.getEntradas().values());
     }
 
@@ -247,13 +212,21 @@ public class Ticketek implements ITicketek {
         if (!(entrada instanceof Entrada)) throw new RuntimeException("Tipo de entrada inválido");
         Entrada ent = (Entrada) entrada;
         Usuario usuario = usuarios.get(ent.getEmailUsuario());
-        if (usuario == null || !usuario.getContrasenia().equals(contrasenia)) throw new RuntimeException("Usuario o contraseña incorrectos");
+        if (usuario == null) throw new RuntimeException("Usuario no encontrado");
+        usuario.validarContrasenia(contrasenia);        
         if (ent.getFecha().isBefore(LocalDate.now())) return false;
         // Cambia aquí: si no existe, lanza excepción
         if (!usuario.getEntradas().containsKey(ent.getCodigoEntrada()))
             throw new RuntimeException("La entrada no existe");
         boolean eliminado = usuario.eliminarEntrada(ent.getCodigoEntrada());
-        // Si manejas asientos, aquí deberías liberar el asiento en Funcion
+        // Si maneja asientos(es numerada), libera el asiento
+        Espectaculo espectaculo = ent.getEspectaculo();
+        if (espectaculo != null) {
+            Funcion funcion = espectaculo.getFunciones().get(ent.getFecha());
+        if (funcion != null) {
+            funcion.liberarAsientoSiCorresponde(ent.getSector(), ent.getAsiento());
+        }
+        }
         return eliminado;
     }
 
@@ -263,7 +236,8 @@ public class Ticketek implements ITicketek {
         if (!(entrada instanceof Entrada)) throw new RuntimeException("Tipo de entrada inválido");
         Entrada ent = (Entrada) entrada;
         Usuario usuario = usuarios.get(ent.getEmailUsuario());
-        if (usuario == null || !usuario.getContrasenia().equals(contrasenia)) throw new RuntimeException("Usuario o contraseña incorrectos");
+        if (usuario == null) throw new RuntimeException("Usuario no encontrado");
+        usuario.validarContrasenia(contrasenia);
         if (ent.getFecha().isBefore(LocalDate.now())) throw new RuntimeException("La entrada original está en el pasado");
         anularEntrada(ent, contrasenia);
         List<IEntrada> nuevas = venderEntrada(ent.getEspectaculo().getNombre(), nuevaFecha, ent.getEmailUsuario(), contrasenia, 1);
@@ -276,7 +250,8 @@ public class Ticketek implements ITicketek {
         if (!(entrada instanceof Entrada)) throw new RuntimeException("Tipo de entrada inválido");
         Entrada ent = (Entrada) entrada;
         Usuario usuario = usuarios.get(ent.getEmailUsuario());
-        if (usuario == null || !usuario.getContrasenia().equals(contrasenia)) throw new RuntimeException("Usuario o contraseña incorrectos");
+        if (usuario == null) throw new RuntimeException("Usuario no encontrado");
+        usuario.validarContrasenia(contrasenia);
         if (ent.getFecha().isBefore(LocalDate.now())) throw new RuntimeException("La entrada original está en el pasado");
         anularEntrada(ent, contrasenia);
         int[] asientos = {nuevoAsiento};
@@ -301,17 +276,7 @@ public class Ticketek implements ITicketek {
         LocalDate fechaFuncion = LocalDate.parse(fecha, dateFormatter);
         Funcion funcion = espectaculo.getFunciones().get(fechaFuncion);
         if (funcion == null) throw new RuntimeException("Función no encontrada");
-        Sede sede = sedes.get(funcion.getSede());
-        double base = funcion.getPrecioBase();
-        int porcentaje = 0;
-        double adicional = 0;
-        if (sede instanceof Teatro teatro) {
-            porcentaje = teatro.getPorcentajeAdicional(sector);
-        } else if (sede instanceof MiniEstadio mini) {
-            porcentaje = mini.getPorcentajeAdicional(sector);
-            adicional = mini.getPrecioConsumicion();
-        }
-        return base + base * porcentaje / 100.0 + adicional;
+        return funcion.calcularPrecioEntrada(sector);
     }
 
 

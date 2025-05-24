@@ -90,4 +90,71 @@ public class Funcion {
                 ", recaudacion=" + recaudacion +
                 '}';
     }
+
+    public static void validarDatos(String nombreEspectaculo, String fecha, String sede, double precioBase) {
+        if (nombreEspectaculo == null || nombreEspectaculo.isEmpty()) {
+            throw new RuntimeException("El nombre del espectáculo no puede ser nulo o vacío");
+        }
+        if (nombreEspectaculo.length() < 3) {
+            throw new RuntimeException("El nombre del espectáculo debe tener al menos 3 caracteres");
+        }
+        if (fecha == null || fecha.isEmpty()) {
+            throw new RuntimeException("La fecha no puede ser nula o vacía");
+        }
+        if (sede == null || sede.isEmpty()) {
+            throw new RuntimeException("La sede no puede ser nula o vacía");
+        }
+        if (sede.length() < 3) {
+            throw new RuntimeException("El nombre de la sede debe tener al menos 3 caracteres");
+        }
+        if (precioBase <= 0) {
+            throw new RuntimeException("El precio base debe ser mayor a cero");
+        }
+    }
+    
+    public String descripcionParaListado(Sede sede, String fechaStr) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" - (").append(fechaStr).append(") ").append(sede.getNombre()).append(" - ");
+        if (sede instanceof Estadio estadio) {
+            int entradasVendidas = this.getEntradasVendidas();
+            sb.append(entradasVendidas).append("/").append(estadio.getCapacidadMaxima());
+        } else if (sede instanceof Teatro teatro) {
+            String[] sectores = teatro.getSectores();
+            int[] capacidades = teatro.getCapacidadSectores();
+            for (int i = 0; i < sectores.length; i++) {
+                int vendidas = this.getEntradasVendidasPorSector(sectores[i]);
+                sb.append(sectores[i]).append(": ").append(vendidas).append("/").append(capacidades[i]);
+                if (i < sectores.length - 1) sb.append(" | ");
+            }
+        } else if (sede instanceof MiniEstadio mini) {
+            String[] sectores = mini.getSectores();
+            int[] capacidades = mini.getCapacidadSectores();
+            for (int i = 0; i < sectores.length; i++) {
+                int vendidas = this.getEntradasVendidasPorSector(sectores[i]);
+                sb.append(sectores[i]).append(": ").append(vendidas).append("/").append(capacidades[i]);
+                if (i < sectores.length - 1) sb.append(" | ");
+            }
+        }
+        return sb.toString();
+    }
+
+    public double calcularPrecioEntrada(String sector) {
+        Sede sede = this.getSedeObj();
+        double base = this.getPrecioBase();
+        int porcentaje = 0;
+        double adicional = 0;
+        if (sede instanceof Teatro teatro) {
+            porcentaje = teatro.getPorcentajeAdicional(sector);
+        } else if (sede instanceof MiniEstadio mini) {
+            porcentaje = mini.getPorcentajeAdicional(sector);
+            adicional = mini.getPrecioConsumicion();
+        }
+        return base + base * porcentaje / 100.0 + adicional;
+    }
+
+    public void liberarAsientoSiCorresponde(String sector, Integer asiento) {
+    if (sector != null && asiento != null) {
+        liberarAsiento(sector, asiento);
+    }
+}
 }

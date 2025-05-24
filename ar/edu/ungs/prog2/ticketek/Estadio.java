@@ -7,5 +7,5 @@ public class Estadio extends Sede {
         super(nombre, direccion, capacidadMaxima);
     }
 
-    // Métodos específicos de Estadio si los necesitas
+    // ver si podemos poner metodos mas especificos para estadio 
 }
