@@ -8,5 +8,5 @@ public class Platea extends Sector {
         this.porcentajeAdicional = porcentajeAdicional;
     }
 
-    public double getValorAdicional() { return porcentajeAdicional; }
+    public double porcentajeAdicional() { return porcentajeAdicional; }
 }

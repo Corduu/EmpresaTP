@@ -49,18 +49,18 @@ public Integer asiento() { return asiento; }
         if (espectaculo != null && fecha != null) {
             Funcion funcion = espectaculo.getFunciones().get(fecha);
             if (funcion != null) {
-                double base = funcion.getPrecioBase();
+                double base = funcion.precioBase();
                 // Si es estadio, solo precio base
                 if (sector == null || sector.equalsIgnoreCase("CAMPO")) return base;
                 // Si es teatro/miniestadio, sumar porcentaje adicional
-                Sede sede = funcion.getSedeObj();
+                Sede sede = funcion.sedeObj();
                 int porcentaje = 0;
                 double consumicion = 0;
                 if (sede instanceof Teatro) {
-                    porcentaje = ((Teatro) sede).getPorcentajeAdicional(sector);
+                    porcentaje = ((Teatro) sede).porcentajeAdicional(sector);
                 } else if (sede instanceof MiniEstadio) {
-                    porcentaje = ((MiniEstadio) sede).getPorcentajeAdicional(sector);
-                    consumicion = ((MiniEstadio) sede).getPrecioConsumicion();
+                    porcentaje = ((MiniEstadio) sede).porcentajeAdicional(sector);
+                    consumicion = ((MiniEstadio) sede).precioConsumicion();
                 }
                 return base + base * porcentaje / 100.0 + consumicion;
             }
@@ -89,7 +89,7 @@ public Integer asiento() { return asiento; }
         String sedeNombre = "";
         if (espectaculo != null && fecha != null) {
             Funcion f = espectaculo.getFunciones().get(fecha);
-            if (f != null) sedeNombre = f.getSede();
+            if (f != null) sedeNombre = f.sede();
         }
         return codigoEntrada + " - " +
                 (espectaculo != null ? espectaculo.getNombre() : "") + " - " +

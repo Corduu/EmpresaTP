@@ -19,20 +19,20 @@ public class Funcion {
 
     public Funcion(LocalDate fecha, Sede sedeObj, double precioBase, String nombreEspectaculo) {
         this.fecha = fecha;
-        this.sede = sedeObj.getNombreSede();
+        this.sede = sedeObj.nombreSede();
         this.sedeObj = sedeObj;
         this.precioBase = precioBase;
         this.nombreEspectaculo = nombreEspectaculo;
     }
 
-    public String getSede() { return sede; }
-    public double getPrecioBase() { return precioBase; }
-    public double getRecaudacion() { return recaudacion; }
-    public LocalDate getFecha() { return fecha; }
-    public String getNombreEspectaculo() { return nombreEspectaculo; }
+    public String sede() { return sede; }
+    public double precioBase() { return precioBase; }
+    public double recaudacion() { return recaudacion; }
+    public LocalDate fecha() { return fecha; }
+    public String nombreEspectaculo() { return nombreEspectaculo; }
 
-    // Para obtener la sede como objeto (requiere acceso a Ticketek o pasarla por constructor)
-    public Sede getSedeObj() { return sedeObj; }
+    // para poder obtener la sede como objeto (requiere acceso a Ticketek o pasarla por constructor)
+    public Sede sedeObj() { return sedeObj; }
     
 
     // Simula la reserva de una entrada
@@ -114,21 +114,21 @@ public class Funcion {
     
     public String descripcionParaListado(Sede sede, String fechaStr) {
         StringBuilder sb = new StringBuilder();
-        sb.append(" - (").append(fechaStr).append(") ").append(sede.getNombreSede()).append(" - ");
+        sb.append(" - (").append(fechaStr).append(") ").append(sede.nombreSede()).append(" - ");
         if (sede instanceof Estadio estadio) {
             int entradasVendidas = this.getEntradasVendidas();
-            sb.append(entradasVendidas).append("/").append(estadio.getCapacidadMaxima());
+            sb.append(entradasVendidas).append("/").append(estadio.capacidadMaxima());
         } else if (sede instanceof Teatro teatro) {
-            String[] sectores = teatro.getSectores();
-            int[] capacidades = teatro.getCapacidadSectores();
+            String[] sectores = teatro.sectores();
+            int[] capacidades = teatro.capacidadSectores();
             for (int i = 0; i < sectores.length; i++) {
                 int vendidas = this.getEntradasVendidasPorSector(sectores[i]);
                 sb.append(sectores[i]).append(": ").append(vendidas).append("/").append(capacidades[i]);
                 if (i < sectores.length - 1) sb.append(" | ");
             }
         } else if (sede instanceof MiniEstadio mini) {
-            String[] sectores = mini.getSectores();
-            int[] capacidades = mini.getCapacidadSectores();
+            String[] sectores = mini.sectores();
+            int[] capacidades = mini.capacidadSectores();
             for (int i = 0; i < sectores.length; i++) {
                 int vendidas = this.getEntradasVendidasPorSector(sectores[i]);
                 sb.append(sectores[i]).append(": ").append(vendidas).append("/").append(capacidades[i]);
@@ -139,15 +139,15 @@ public class Funcion {
     }
 
     public double calcularPrecioEntrada(String sector) {
-        Sede sede = this.getSedeObj();
-        double base = this.getPrecioBase();
+        Sede sede = this.sedeObj();
+        double base = this.precioBase();
         int porcentaje = 0;
         double adicional = 0;
         if (sede instanceof Teatro teatro) {
-            porcentaje = teatro.getPorcentajeAdicional(sector);
+            porcentaje = teatro.porcentajeAdicional(sector);
         } else if (sede instanceof MiniEstadio mini) {
-            porcentaje = mini.getPorcentajeAdicional(sector);
-            adicional = mini.getPrecioConsumicion();
+            porcentaje = mini.porcentajeAdicional(sector);
+            adicional = mini.precioConsumicion();
         }
         return base + base * porcentaje / 100.0 + adicional;
     }

@@ -103,7 +103,7 @@ public class Ticketek implements ITicketek {
     if (funcion == null) {
         throw new RuntimeException("Función no encontrada");
     }
-    Sede sede = sedes.get(funcion.getSedeObj().getNombreSede());
+    Sede sede = sedes.get(funcion.sedeObj().nombreSede());
     sede.validarEsEstadio();
     List<IEntrada> entradasVendidas = new ArrayList<>();
     for (int i = 0; i < cantidadEntradas; i++) {
@@ -136,7 +136,7 @@ public class Ticketek implements ITicketek {
         if (funcion == null) {
             throw new RuntimeException("Función no encontrada");
         }
-        Sede sede = sedes.get(funcion.getSedeObj().getNombreSede());
+        Sede sede = sedes.get(funcion.sedeObj().nombreSede());
         sede.validarEsNumerada();
         List<IEntrada> entradasVendidas = new ArrayList<>();
         for (int asiento : asientos) {
@@ -162,7 +162,7 @@ public class Ticketek implements ITicketek {
         fechas.sort(LocalDate::compareTo);
         for (LocalDate fecha : fechas) {
             Funcion funcion = espectaculo.getFunciones().get(fecha);
-            Sede sede = sedes.get(funcion.getSedeObj().getNombreSede());
+            Sede sede = sedes.get(funcion.sedeObj().nombreSede());
             String fechaStr = fecha.format(dateFormatter);
             sb.append(funcion.descripcionParaListado(sede, fechaStr));
             sb.append("\n");
@@ -270,7 +270,7 @@ public class Ticketek implements ITicketek {
         LocalDate fechaFuncion = LocalDate.parse(fecha, dateFormatter);
         Funcion funcion = espectaculo.getFunciones().get(fechaFuncion);
         if (funcion == null) throw new RuntimeException("Función no encontrada");
-        return funcion.getPrecioBase();
+        return funcion.precioBase();
     }
 
     @Override
@@ -301,7 +301,7 @@ public class Ticketek implements ITicketek {
                 Espectaculo esp = espectaculos.get(nombreEspectaculo);
                 if (esp != null) {
                     Funcion funcion = esp.getFunciones().get(ent.fecha());
-                    if (funcion != null && funcion.getSedeObj().getNombreSede().equals(nombreSede)) {
+                    if (funcion != null && funcion.sedeObj().nombreSede().equals(nombreSede)) {
                         total += entrada.precio();
                     }
                 }

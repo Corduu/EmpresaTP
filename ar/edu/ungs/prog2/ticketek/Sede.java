@@ -16,9 +16,9 @@ public abstract class Sede {
         this.capacidadMaxima = capacidadMaxima;
     }
 
-    public String getNombreSede() { return nombreSede; }
-    public String getDireccion() { return direccion; }
-    public int getCapacidadMaxima() { return capacidadMaxima; }
+    public String nombreSede() { return nombreSede; }
+    public String direccion() { return direccion; }
+    public int capacidadMaxima() { return capacidadMaxima; }
 
     public boolean fechaOcupada(LocalDate fecha) {
         return funcionesPorFecha.containsKey(fecha);

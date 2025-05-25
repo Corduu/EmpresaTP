@@ -10,6 +10,6 @@ public class Campo extends Sector {
         this.cantidadPuestos = cantidadPuestos;
     }
 
-    public int getPorcentajeAdicional() { return porcentajeAdicional; }
-    public int getCantidadPuestos() { return cantidadPuestos; }
+    public int porcentajeAdicional() { return porcentajeAdicional; }
+    public int cantidadPuestos() { return cantidadPuestos; }
 }

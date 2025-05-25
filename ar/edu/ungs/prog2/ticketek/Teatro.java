@@ -14,9 +14,9 @@ public class Teatro extends Sede {
         this.porcentajeAdicional = porcentajeAdicional;
     }
 
-    public String[] getSectores() { return sectores; }
-    public int[] getCapacidadSectores() { return capacidad; }
-    public int getPorcentajeAdicional(String sector) {
+    public String[] sectores() { return sectores; }
+    public int[] capacidadSectores() { return capacidad; }
+    public int porcentajeAdicional(String sector) {
         for (int i = 0; i < sectores.length; i++) {
             if (sectores[i].equalsIgnoreCase(sector)) return porcentajeAdicional[i];
         }

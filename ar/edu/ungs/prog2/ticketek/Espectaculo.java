@@ -32,7 +32,7 @@ public class Espectaculo {
     public double calcularRecaudacionTotal() {
         double total = 0;
         for (Funcion f : funciones.values()) {
-            total += f.getRecaudacion();
+            total += f.recaudacion();
         }
         return total;
     }
