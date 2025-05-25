@@ -28,7 +28,7 @@ public class Entrada implements IEntrada {
 
 public boolean esDeCodigo(String codigo) { return codigoEntrada.equals(codigo); }
 public boolean esDeUsuario(String email) { return emailUsuario.equals(email); }
-public boolean esDeEspectaculo(String nombre) { return espectaculo != null && espectaculo.getNombre().equals(nombre); }
+public boolean esDeEspectaculo(String nombre) { return espectaculo != null && espectaculo.nombre().equals(nombre); }
 public boolean esDeFecha(LocalDate f) { return fecha.equals(f); }
 public boolean esDeSector(String s) { return sector != null && sector.equalsIgnoreCase(s); }
 public boolean esDeFila(Integer f) { return fila != null && fila.equals(f); }
@@ -92,7 +92,7 @@ public Integer asiento() { return asiento; }
             if (f != null) sedeNombre = f.sede();
         }
         return codigoEntrada + " - " +
-                (espectaculo != null ? espectaculo.getNombre() : "") + " - " +
+                (espectaculo != null ? espectaculo.nombre() : "") + " - " +
                 fechaStr + " - " +
                 sedeNombre + " - " +
                 ubicacion();

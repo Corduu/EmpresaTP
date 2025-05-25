@@ -48,7 +48,6 @@ public class Funcion {
         }
     }
 
-
     // utilizamos para chequear si un asiento está disponible
     public boolean asientoDisponible(String sector, int asiento) {
         if (sector != null && asientosPorSector.containsKey(sector)) {

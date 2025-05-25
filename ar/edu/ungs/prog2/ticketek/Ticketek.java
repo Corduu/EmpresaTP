@@ -177,7 +177,7 @@ public class Ticketek implements ITicketek {
             Iterator<Entrada> it = usuario.getEntradas().values().iterator();
             while (it.hasNext()) {
                 Entrada entrada = it.next();
-                if (entrada.espectaculo().getNombre().equals(nombreEspectaculo)) {
+                if (entrada.espectaculo().nombre().equals(nombreEspectaculo)) {
                     entradas.add(entrada);
                 }
             }
@@ -244,7 +244,7 @@ public class Ticketek implements ITicketek {
         usuario.validarContrasenia(contrasenia);
         if (!ent.esFutura(LocalDate.now())) throw new RuntimeException("La entrada original está en el pasado");
         anularEntrada(ent, contrasenia);
-        List<IEntrada> nuevas = venderEntrada(ent.espectaculo().getNombre(), nuevaFecha, ent.usuario(), contrasenia, 1);
+        List<IEntrada> nuevas = venderEntrada(ent.espectaculo().nombre(), nuevaFecha, ent.usuario(), contrasenia, 1);
         return nuevas.get(0);
     }
 
@@ -259,7 +259,7 @@ public class Ticketek implements ITicketek {
         if (!ent.esFutura(LocalDate.now())) throw new RuntimeException("La entrada original está en el pasado");
         anularEntrada(ent, contrasenia);
         int[] asientos = {nuevoAsiento};
-        List<IEntrada> nuevas = venderEntrada(ent.espectaculo().getNombre(), nuevaFecha, ent.usuario(), contrasenia, nuevoSector, asientos);
+        List<IEntrada> nuevas = venderEntrada(ent.espectaculo().nombre(), nuevaFecha, ent.usuario(), contrasenia, nuevoSector, asientos);
         return nuevas.get(0);
     }
 

@@ -13,10 +13,10 @@ public class Espectaculo {
         this.nombre = nombre;
     }
 
-    public String getNombre() { 
+    public String nombre() { 
         return nombre;
     }
-    public String getCodigoEspectaculo() { 
+    public String codigoEspectaculo() { 
         return codigo; 
     }
     public Map<LocalDate, Funcion> getFunciones() { 
