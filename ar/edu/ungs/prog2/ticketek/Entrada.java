@@ -26,13 +26,22 @@ public class Entrada implements IEntrada {
         this.asiento = asiento;
     }
 
-    public String getCodigoEntrada() { return codigoEntrada; }
-    public String getEmailUsuario() { return emailUsuario; }
-    public Espectaculo getEspectaculo() { return espectaculo; }
-    public LocalDate getFecha() { return fecha; }
-    public String getSector() { return sector; }
-    public Integer getFila() { return fila; }
-    public Integer getAsiento() { return asiento; }
+public boolean esDeCodigo(String codigo) { return codigoEntrada.equals(codigo); }
+public boolean esDeUsuario(String email) { return emailUsuario.equals(email); }
+public boolean esDeEspectaculo(String nombre) { return espectaculo != null && espectaculo.getNombre().equals(nombre); }
+public boolean esDeFecha(LocalDate f) { return fecha.equals(f); }
+public boolean esDeSector(String s) { return sector != null && sector.equalsIgnoreCase(s); }
+public boolean esDeFila(Integer f) { return fila != null && fila.equals(f); }
+public boolean esDeAsiento(Integer a) { return asiento != null && asiento.equals(a); }
+public boolean esFutura(LocalDate hoy) { return fecha.isAfter(hoy); }
+
+// para buscar por código, usuario o espectaculo
+public String codigo() { return codigoEntrada; } 
+public String usuario() { return emailUsuario; }
+public Espectaculo espectaculo() { return espectaculo; }
+public LocalDate fecha() { return fecha; }
+public String sector() { return sector; }
+public Integer asiento() { return asiento; }
 
 
     @Override

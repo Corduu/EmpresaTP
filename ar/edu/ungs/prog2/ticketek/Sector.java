@@ -9,6 +9,6 @@ public class Sector {
         this.capacidad = capacidad;
     }
 
-    public String getNombre() { return nombre; }
-    public int getCapacidad() { return capacidad; }
+    public String nombre() { return nombre; }
+    public int capacidad() { return capacidad; }
 }

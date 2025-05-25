@@ -16,17 +16,13 @@ public class Usuario {
         this.email = email;
         this.contrasenia = contrasenia;
     }
-    public String getNombre() { return nombre; }
-    public String getApellido() { return apellido; }
-    public String getContrasenia() { return contrasenia; }
-    public String getEmail() { return email; }
 
     public boolean isRegistrado() { return true; } // O lógica real
     public boolean isEmailValido() { return email != null && email.contains("@"); }
     public boolean isContraseniaValida() { return contrasenia != null && contrasenia.length() >= 4; }
 
     public void agregarEntrada(Entrada entrada) {
-        entradas.put(entrada.getCodigoEntrada(), entrada);
+        entradas.put(entrada.codigo(), entrada);
     }
     public Entrada getEntrada(String codigo) {
         return entradas.get(codigo);
@@ -62,13 +58,13 @@ public class Usuario {
     }
     
     public void validarEmail(String email) {
-    if (!this.getEmail().equals(email)) {
+    if (!this.email.equals(email)) {
         throw new RuntimeException("Email incorrecto");
         }
     }
 
     public void validarContrasenia(String contrasenia) {
-        if (!this.getContrasenia().equals(contrasenia)) {
+        if (!this.contrasenia.equals(contrasenia)) {
             throw new RuntimeException("Contraseña incorrecta");
         }
     }

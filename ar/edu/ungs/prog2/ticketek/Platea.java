@@ -1,12 +1,12 @@
 package ar.edu.ungs.prog2.ticketek;
 
 public class Platea extends Sector {
-    private double procentajeAdicional;
+    private double porcentajeAdicional;
 
-    public Platea(String nombre, int capacidad, double procentajeAdicional) {
+    public Platea(String nombre, int capacidad, double porcentajeAdicional) {
         super(nombre, capacidad);
-        this.procentajeAdicional = procentajeAdicional;
+        this.porcentajeAdicional = porcentajeAdicional;
     }
 
-    public double getValorAdicional() { return procentajeAdicional; }
+    public double getValorAdicional() { return porcentajeAdicional; }
 }

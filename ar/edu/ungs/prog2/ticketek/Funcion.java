@@ -37,7 +37,7 @@ public class Funcion {
 
     // Simula la reserva de una entrada
     public void reservarEntrada(String sector, int asiento) {
-        recaudacion += precioBase; // O lógica con sector/asiento
+        recaudacion += precioBase; // O logica con sector/asiento
         // para manejar los asientos
         if (sector != null) {
             entradasPorSector.put(sector, entradasPorSector.getOrDefault(sector, 0) + 1);
