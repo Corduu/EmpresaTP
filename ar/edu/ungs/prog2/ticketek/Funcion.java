@@ -19,7 +19,7 @@ public class Funcion {
 
     public Funcion(LocalDate fecha, Sede sedeObj, double precioBase, String nombreEspectaculo) {
         this.fecha = fecha;
-        this.sede = sedeObj.getNombre();
+        this.sede = sedeObj.getNombreSede();
         this.sedeObj = sedeObj;
         this.precioBase = precioBase;
         this.nombreEspectaculo = nombreEspectaculo;
@@ -114,7 +114,7 @@ public class Funcion {
     
     public String descripcionParaListado(Sede sede, String fechaStr) {
         StringBuilder sb = new StringBuilder();
-        sb.append(" - (").append(fechaStr).append(") ").append(sede.getNombre()).append(" - ");
+        sb.append(" - (").append(fechaStr).append(") ").append(sede.getNombreSede()).append(" - ");
         if (sede instanceof Estadio estadio) {
             int entradasVendidas = this.getEntradasVendidas();
             sb.append(entradasVendidas).append("/").append(estadio.getCapacidadMaxima());

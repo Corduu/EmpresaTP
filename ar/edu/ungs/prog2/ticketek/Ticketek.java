@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,30 +20,30 @@ public class Ticketek implements ITicketek {
     }
 
     @Override
-    public void registrarSede(String nombre, String direccion, int capacidadMaxima) {
-        if (sedes.containsKey(nombre)) {
+    public void registrarSede(String nombreSede, String direccion, int capacidadMaxima) {
+        if (sedes.containsKey(nombreSede)) {
             throw new RuntimeException("Sede ya registrada");
         }
-        Sede.validarDatos(nombre, direccion, capacidadMaxima);
-        sedes.put(nombre, new Estadio(nombre, direccion, capacidadMaxima));
+        Sede.validarDatos(nombreSede, direccion, capacidadMaxima);
+        sedes.put(nombreSede, new Estadio(nombreSede, direccion, capacidadMaxima));
     }
 
     @Override
-    public void registrarSede(String nombre, String direccion, int capacidadMaxima, int asientosPorFila, String[] sectores, int[] capacidad, int[] porcentajeAdicional) {
-        if (sedes.containsKey(nombre)) {
+    public void registrarSede(String nombreSede, String direccion, int capacidadMaxima, int asientosPorFila, String[] sectores, int[] capacidad, int[] porcentajeAdicional) {
+        if (sedes.containsKey(nombreSede)) {
             throw new RuntimeException("Sede ya registrada");
         }
-        Sede.validarDatos(nombre, direccion, capacidadMaxima, asientosPorFila, sectores, capacidad, porcentajeAdicional);
-        sedes.put(nombre, new Teatro(nombre, direccion, capacidadMaxima, asientosPorFila, sectores, capacidad, porcentajeAdicional));
+        Sede.validarDatos(nombreSede, direccion, capacidadMaxima, asientosPorFila, sectores, capacidad, porcentajeAdicional);
+        sedes.put(nombreSede, new Teatro(nombreSede, direccion, capacidadMaxima, asientosPorFila, sectores, capacidad, porcentajeAdicional));
     }
 
     @Override
-    public void registrarSede(String nombre, String direccion, int capacidadMaxima, int asientosPorFila, int cantidadPuestos, double precioConsumicion, String[] sectores, int[] capacidad, int[] porcentajeAdicional) {
-        if (sedes.containsKey(nombre)) {
+    public void registrarSede(String nombreSede, String direccion, int capacidadMaxima, int asientosPorFila, int cantidadPuestos, double precioConsumicion, String[] sectores, int[] capacidad, int[] porcentajeAdicional) {
+        if (sedes.containsKey(nombreSede)) {
             throw new RuntimeException("Sede ya registrada");
         }
-        Sede.validarDatos(nombre, direccion, capacidadMaxima, asientosPorFila, cantidadPuestos, precioConsumicion, sectores, capacidad, porcentajeAdicional);
-        sedes.put(nombre, new MiniEstadio(nombre, direccion, capacidadMaxima, asientosPorFila, cantidadPuestos, precioConsumicion, sectores, capacidad, porcentajeAdicional));
+        Sede.validarDatos(nombreSede, direccion, capacidadMaxima, asientosPorFila, cantidadPuestos, precioConsumicion, sectores, capacidad, porcentajeAdicional);
+        sedes.put(nombreSede, new MiniEstadio(nombreSede, direccion, capacidadMaxima, asientosPorFila, cantidadPuestos, precioConsumicion, sectores, capacidad, porcentajeAdicional));
     }
 
     @Override
@@ -102,7 +103,7 @@ public class Ticketek implements ITicketek {
     if (funcion == null) {
         throw new RuntimeException("Función no encontrada");
     }
-    Sede sede = sedes.get(funcion.getSede());
+    Sede sede = sedes.get(funcion.getSedeObj().getNombreSede());
     sede.validarEsEstadio();
     List<IEntrada> entradasVendidas = new ArrayList<>();
     for (int i = 0; i < cantidadEntradas; i++) {
@@ -135,7 +136,7 @@ public class Ticketek implements ITicketek {
         if (funcion == null) {
             throw new RuntimeException("Función no encontrada");
         }
-        Sede sede = sedes.get(funcion.getSede());
+        Sede sede = sedes.get(funcion.getSedeObj().getNombreSede());
         sede.validarEsNumerada();
         List<IEntrada> entradasVendidas = new ArrayList<>();
         for (int asiento : asientos) {
@@ -161,7 +162,7 @@ public class Ticketek implements ITicketek {
         fechas.sort(LocalDate::compareTo);
         for (LocalDate fecha : fechas) {
             Funcion funcion = espectaculo.getFunciones().get(fecha);
-            Sede sede = sedes.get(funcion.getSede());
+            Sede sede = sedes.get(funcion.getSedeObj().getNombreSede());
             String fechaStr = fecha.format(dateFormatter);
             sb.append(funcion.descripcionParaListado(sede, fechaStr));
             sb.append("\n");
@@ -173,7 +174,9 @@ public class Ticketek implements ITicketek {
     public List<IEntrada> listarEntradasEspectaculo(String nombreEspectaculo) { 
         List<IEntrada> entradas = new ArrayList<>();
         for (Usuario usuario : usuarios.values()) {
-            for (Entrada entrada : usuario.getEntradas().values()) {
+            Iterator<Entrada> it = usuario.getEntradas().values().iterator();
+            while (it.hasNext()) {
+                Entrada entrada = it.next();
                 if (entrada.getEspectaculo().getNombre().equals(nombreEspectaculo)) {
                     entradas.add(entrada);
                 }
@@ -185,6 +188,7 @@ public class Ticketek implements ITicketek {
     @Override
     public List<IEntrada> listarEntradasFuturas(String email, String contrasenia) {
         Usuario usuario = usuarios.get(email);
+        if (usuario == null) throw new RuntimeException("Usuario no encontrado");
         usuario.validarEmail(email);
         usuario.validarContrasenia(contrasenia);
         List<IEntrada> futuras = new ArrayList<>();
@@ -297,7 +301,7 @@ public class Ticketek implements ITicketek {
                 Espectaculo esp = espectaculos.get(nombreEspectaculo);
                 if (esp != null) {
                     Funcion funcion = esp.getFunciones().get(ent.getFecha());
-                    if (funcion != null && funcion.getSede().equals(nombreSede)) {
+                    if (funcion != null && funcion.getSedeObj().getNombreSede().equals(nombreSede)) {
                         total += entrada.precio();
                     }
                 }

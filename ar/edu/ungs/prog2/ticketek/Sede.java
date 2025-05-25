@@ -6,17 +6,17 @@ import java.util.Map;
 
 public abstract class Sede {
     protected int capacidadMaxima;
-    protected String nombre;
+    protected String nombreSede;
     protected String direccion;
     protected Map<LocalDate, String> funcionesPorFecha = new HashMap<>();
 
-    public Sede(String nombre, String direccion, int capacidadMaxima) {
-        this.nombre = nombre;
+    public Sede(String nombreSede, String direccion, int capacidadMaxima) {
+        this.nombreSede = nombreSede;
         this.direccion = direccion;
         this.capacidadMaxima = capacidadMaxima;
     }
 
-    public String getNombre() { return nombre; }
+    public String getNombreSede() { return nombreSede; }
     public String getDireccion() { return direccion; }
     public int getCapacidadMaxima() { return capacidadMaxima; }
 
@@ -28,8 +28,8 @@ public abstract class Sede {
         funcionesPorFecha.put(fecha, nombreEspectaculo);
     }
 
-    public static void validarDatos(String nombre, String direccion, int capacidadMaxima) {
-        if (nombre == null || nombre.isEmpty()) {
+    public static void validarDatos(String nombreSede, String direccion, int capacidadMaxima) {
+        if (nombreSede == null || nombreSede.isEmpty()) {
             throw new RuntimeException("El nombre de la sede no puede ser nulo o vacío");
         }
         if (direccion == null || direccion.isEmpty()) {
@@ -40,8 +40,8 @@ public abstract class Sede {
         }
     }
 
-    public static void validarDatos(String nombre, String direccion, int capacidadMaxima, int asientosPorFila, String[] sectores, int[] capacidad, int[] porcentajeAdicional) {
-        validarDatos(nombre, direccion, capacidadMaxima);
+    public static void validarDatos(String nombreSede, String direccion, int capacidadMaxima, int asientosPorFila, String[] sectores, int[] capacidad, int[] porcentajeAdicional) {
+        validarDatos(nombreSede, direccion, capacidadMaxima);
         if (asientosPorFila <= 0) {
             throw new RuntimeException("La cantidad de asientos por fila debe ser mayor a cero");
         }
@@ -56,8 +56,8 @@ public abstract class Sede {
         }
     }
 
-    public static void validarDatos(String nombre, String direccion, int capacidadMaxima, int asientosPorFila, int cantidadPuestos, double precioConsumicion, String[] sectores, int[] capacidad, int[] porcentajeAdicional) {
-        validarDatos(nombre, direccion, capacidadMaxima, asientosPorFila, sectores, capacidad, porcentajeAdicional);
+    public static void validarDatos(String nombreSede, String direccion, int capacidadMaxima, int asientosPorFila, int cantidadPuestos, double precioConsumicion, String[] sectores, int[] capacidad, int[] porcentajeAdicional) {
+        validarDatos(nombreSede, direccion, capacidadMaxima, asientosPorFila, sectores, capacidad, porcentajeAdicional);
         if (cantidadPuestos <= 0) {
             throw new RuntimeException("La cantidad de puestos debe ser mayor a cero");
         }
