@@ -78,8 +78,6 @@ public Integer asiento() { return asiento; }
             ubic += " a:" + asiento;
         }
         return ubic;
-        // Devuelve el sector si existe, si no, "General"
-        //return (sector != null && !sector.isEmpty()) ? sector : "General";
     }
 
     @Override

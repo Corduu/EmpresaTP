@@ -90,13 +90,13 @@ public class Ticketek implements ITicketek {
     }
     Usuario usuario = usuarios.get(email);
     if (usuario == null){
-        throw new RuntimeException("Usuario no encontrado");
+        throw new RuntimeException("Usuario no registrado");
     }
     usuario.validarEmail(email);
     usuario.validarContrasenia(contrasenia);
     Espectaculo espectaculo = espectaculos.get(nombreEspectaculo);
     if (espectaculo == null) {
-        throw new RuntimeException("Espectáculo no encontrado");
+        throw new RuntimeException("Espectáculo no registrado");
     }
     LocalDate fechaFuncion = LocalDate.parse(fecha, dateFormatter);
     Funcion funcion = espectaculo.getFunciones().get(fechaFuncion);
