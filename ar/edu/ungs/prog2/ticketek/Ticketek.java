@@ -235,8 +235,8 @@ public class Ticketek implements ITicketek {
     }
 
     @Override
-    public IEntrada cambiarEntrada(IEntrada entrada, String contrasenia, String nuevaFecha) {
-        if (entrada == null || contrasenia == null || nuevaFecha == null) throw new RuntimeException("Datos inválidos");
+    public IEntrada cambiarEntrada(IEntrada entrada, String contrasenia, String fecha) {
+        if (entrada == null || contrasenia == null || fecha == null) throw new RuntimeException("Datos inválidos");
         if (!(entrada instanceof Entrada)) throw new RuntimeException("Tipo de entrada inválido");
         Entrada ent = (Entrada) entrada;
         Usuario usuario = usuarios.get(ent.usuario());
@@ -244,13 +244,13 @@ public class Ticketek implements ITicketek {
         usuario.validarContrasenia(contrasenia);
         if (!ent.esFutura(LocalDate.now())) throw new RuntimeException("La entrada original está en el pasado");
         anularEntrada(ent, contrasenia);
-        List<IEntrada> nuevas = venderEntrada(ent.espectaculo().nombre(), nuevaFecha, ent.usuario(), contrasenia, 1);
+        List<IEntrada> nuevas = venderEntrada(ent.espectaculo().nombre(), fecha, ent.usuario(), contrasenia, 1);
         return nuevas.get(0);
     }
 
     @Override
-    public IEntrada cambiarEntrada(IEntrada entrada, String contrasenia, String nuevaFecha, String nuevoSector, int nuevoAsiento) {
-        if (entrada == null || contrasenia == null || nuevaFecha == null || nuevoSector == null) throw new RuntimeException("Datos inválidos");
+    public IEntrada cambiarEntrada(IEntrada entrada, String contrasenia, String fecha, String sector, int asiento) {
+        if (entrada == null || contrasenia == null || fecha == null || sector == null) throw new RuntimeException("Datos inválidos");
         if (!(entrada instanceof Entrada)) throw new RuntimeException("Tipo de entrada inválido");
         Entrada ent = (Entrada) entrada;
         Usuario usuario = usuarios.get(ent.usuario());
@@ -258,8 +258,8 @@ public class Ticketek implements ITicketek {
         usuario.validarContrasenia(contrasenia);
         if (!ent.esFutura(LocalDate.now())) throw new RuntimeException("La entrada original está en el pasado");
         anularEntrada(ent, contrasenia);
-        int[] asientos = {nuevoAsiento};
-        List<IEntrada> nuevas = venderEntrada(ent.espectaculo().nombre(), nuevaFecha, ent.usuario(), contrasenia, nuevoSector, asientos);
+        int[] asientos = {asiento};
+        List<IEntrada> nuevas = venderEntrada(ent.espectaculo().nombre(), fecha, ent.usuario(), contrasenia, sector, asientos);
         return nuevas.get(0);
     }
 
