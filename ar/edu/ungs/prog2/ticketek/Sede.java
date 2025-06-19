@@ -4,10 +4,12 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+// Clase abstracta base para todas las sedes (Estadio, Teatro, MiniEstadio)
 public abstract class Sede {
     protected int capacidadMaxima;
     protected String nombreSede;
     protected String direccion;
+    // Mapa de funciones por fecha (para saber si una fecha está ocupada)
     protected Map<LocalDate, String> funcionesPorFecha = new HashMap<>();
 
     public Sede(String nombreSede, String direccion, int capacidadMaxima) {
@@ -20,67 +22,50 @@ public abstract class Sede {
     public String direccion() { return direccion; }
     public int capacidadMaxima() { return capacidadMaxima; }
 
+    // Métodos abstractos que deben implementar las subclases
+    public abstract String descripcionParaListado(Funcion funcion, String fechaStr);
+    public abstract double calcularPrecioEntrada(String sector, double precioBase);
+
+    // Devuelve true si la fecha ya está ocupada en la sede
     public boolean fechaOcupada(LocalDate fecha) {
         return funcionesPorFecha.containsKey(fecha);
     }
-
+    
+    // Agrega una función a la sede
     public void agregarFuncion(LocalDate fecha, String nombreEspectaculo) {
         funcionesPorFecha.put(fecha, nombreEspectaculo);
     }
 
+    // Solo validación basica, lo demás lo puse en las subclases
     public static void validarDatos(String nombreSede, String direccion, int capacidadMaxima) {
-        if (nombreSede == null || nombreSede.isEmpty()) {
-            throw new RuntimeException("El nombre de la sede no puede ser nulo o vacío");
-        }
-        if (direccion == null || direccion.isEmpty()) {
-            throw new RuntimeException("La dirección de la sede no puede ser nula o vacía");
-        }
-        if (capacidadMaxima <= 0) {
-            throw new RuntimeException("La capacidad máxima debe ser mayor a cero");
-        }
+        if (nombreSede == null || nombreSede.isEmpty()) throw new RuntimeException("El nombre de la sede no puede ser nulo o vacío");
+        if (direccion == null || direccion.isEmpty()) throw new RuntimeException("La dirección de la sede no puede ser nula o vacía");
+        if (capacidadMaxima <= 0) throw new RuntimeException("La capacidad máxima debe ser mayor a cero");
     }
 
-    public static void validarDatos(String nombreSede, String direccion, int capacidadMaxima, int asientosPorFila, String[] sectores, int[] capacidad, int[] porcentajeAdicional) {
-        validarDatos(nombreSede, direccion, capacidadMaxima);
-        if (asientosPorFila <= 0) {
-            throw new RuntimeException("La cantidad de asientos por fila debe ser mayor a cero");
-        }
-        if (sectores == null || sectores.length == 0) {
-            throw new RuntimeException("Debe haber al menos un sector");
-        }
-        if (capacidad == null || capacidad.length != sectores.length) {
-            throw new RuntimeException("La cantidad de capacidades debe coincidir con la cantidad de sectores");
-        }
-        if (porcentajeAdicional == null || porcentajeAdicional.length != sectores.length) {
-            throw new RuntimeException("La cantidad de porcentajes adicionales debe coincidir con la cantidad de sectores");
-        }
-    }
-
-    public static void validarDatos(String nombreSede, String direccion, int capacidadMaxima, int asientosPorFila, int cantidadPuestos, double precioConsumicion, String[] sectores, int[] capacidad, int[] porcentajeAdicional) {
-        validarDatos(nombreSede, direccion, capacidadMaxima, asientosPorFila, sectores, capacidad, porcentajeAdicional);
-        if (cantidadPuestos <= 0) {
-            throw new RuntimeException("La cantidad de puestos debe ser mayor a cero");
-        }
-        if (precioConsumicion <= 0) {
-            throw new RuntimeException("El precio de consumición debe ser mayor a cero");
-        }
-    }
-
+    // Valida que la fecha esté disponible para agregar una función
     public void validarDisponibleParaFuncion(LocalDate fecha) {
-    if (fechaOcupada(fecha)) {
-        throw new RuntimeException("Fecha ocupada en la sede");
+        if (fechaOcupada(fecha)) {
+            throw new RuntimeException("Fecha ocupada en la sede");
         }
     }
 
-    public void validarEsEstadio() {
-    if (!(this instanceof Estadio)) {
-        throw new RuntimeException("La sede no es un estadio (no numerada)");
-        }
+     // Devuelve un mapa vacío por defecto (las subclases lo sobrescriben)
+    public Map<String, Integer> capacidadPorSector() {
+        return new HashMap<>();
     }
 
-    public void validarEsNumerada() {
-    if (!(this instanceof Teatro) && !(this instanceof MiniEstadio)) {
-        throw new RuntimeException("La sede no es numerada (Teatro o MiniEstadio)");
-        }
+    // Dos sedes son iguales si tienen el mismo nombre (ignorando mayúsculas)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Sede sede = (Sede) o;
+        return nombreSede.equalsIgnoreCase(sede.nombreSede);
+    }
+
+    @Override
+    public int hashCode() {
+        return nombreSede.toLowerCase().hashCode();
     }
 }

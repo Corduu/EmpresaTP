@@ -1,15 +1,8 @@
 package ar.edu.ungs.prog2.ticketek;
 
+// Representa el sector "CAMPO" de un estadio (sin asientos numerados)
 public class Campo extends Sector {
-    private int porcentajeAdicional;
-    private int cantidadPuestos;
-
-    public Campo(String nombre, int capacidad, int porcentajeAdicional, int cantidadPuestos) {
-        super(nombre, capacidad);
-        this.porcentajeAdicional = porcentajeAdicional;
-        this.cantidadPuestos = cantidadPuestos;
+    public Campo(int capacidad, int porcentajeAdicional) {
+        super("CAMPO", capacidad, porcentajeAdicional);
     }
-
-    public int porcentajeAdicional() { return porcentajeAdicional; }
-    public int cantidadPuestos() { return cantidadPuestos; }
 }

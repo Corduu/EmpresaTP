@@ -1,5 +1,6 @@
 package ar.edu.ungs.prog2.ticketek;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class depurador {
@@ -69,7 +70,6 @@ public class depurador {
 
         // Vender entradas para varios usuarios y espectáculos
         try {
-            List<IEntrada> entradasJavierColdplay = ticketek.venderEntrada("Coldplay en vivo", "30/07/25", "javierm@campus.ungs.edu.ar", "1234", 3);
             ticketek.venderEntrada("Coldplay en vivo", "01/08/25", "nores@campus.ungs.edu.ar", "1234", 3);
             ticketek.venderEntrada("La sirenita", "28/07/25", "javierm@campus.ungs.edu.ar", "1234", "Comun", new int[]{1, 2, 3, 4});
             ticketek.venderEntrada("La sirenita", "25/07/25", "nores@campus.ungs.edu.ar", "1234", "Baja", new int[]{1, 2, 3, 4});
@@ -156,8 +156,50 @@ public class depurador {
         } catch (Exception e) {
             System.out.println("Error al consultar costo de entrada: " + e.getMessage());
         }
+        
 
+        // ===========================================
+        //  Demostración de uso de equals y hashCode
+        // ===========================================
+
+        // Usuario
+        System.out.println("\n--- Comparación de Usuario ---");
+        Usuario u1 = new Usuario("Franco", "Mastantuono", "francoMastantuono@mail.com", "abcd");
+        Usuario u2 = new Usuario("Franco", "Mastantuono", "francoMastantuono@mail.com", "abcd");
+        System.out.println("Usuario: u1.equals(u2)? " + u1.equals(u2)); // true esperado
+        System.out.println("Usuario: u1.hashCode() == u2.hashCode()? " + (u1.hashCode() == u2.hashCode())); // true esperado
+
+        // Sede (usando Teatro como subclase concreta)
+        System.out.println("\n--- Comparación de Sede (Teatro) ---");
+        Sede s1 = new Teatro("El uno", "Calle 2", 200, 30, java.util.Arrays.asList(new Platea("VIP", 200, 70)));
+Sede s2 = new Teatro("El uno", "Otra dirección", 500, 30, java.util.Arrays.asList(new Platea("VIP", 500, 70)));
+        System.out.println("Sede: s1.equals(s2)? " + s1.equals(s2)); // true esperado
+        System.out.println("Sede: s1.hashCode() == s2.hashCode()? " + (s1.hashCode() == s2.hashCode())); // true esperado
+
+        // Espectaculo
+        System.out.println("\n--- Comparación de Espectaculo ---");
+        Espectaculo e1 = new Espectaculo("Los piojos en vivo");
+        Espectaculo e2 = new Espectaculo("Los piojos en vivo");
+        System.out.println("Espectaculo: e1.equals(e2)? " + e1.equals(e2)); // true esperado
+        System.out.println("Espectaculo: e1.hashCode() == e2.hashCode()? " + (e1.hashCode() == e2.hashCode())); // true esperado
+
+        // Sector
+        System.out.println("\n--- Comparación de Sector ---");
+        Sector sec1 = new Platea("VIP", 100, 0);
+        Sector sec2 = new Platea("VIP", 100, 0);
+        System.out.println("Sector: sec1.equals(sec2)? " + sec1.equals(sec2)); // true esperado
+        System.out.println("Sector: sec1.hashCode() == sec2.hashCode()? " + (sec1.hashCode() == sec2.hashCode())); // true esperado
+
+        // Entrada
+        System.out.println("\n--- Comparación de Entrada ---");
+        Entrada en1 = new Entrada(LocalDate.of(2025, 7, 25), "VIP", e1, "123", "ana@mail.com");
+        Entrada en2 = new Entrada(LocalDate.of(2025, 7, 25), "VIP", e1, "123", "ana@mail.com");
+        System.out.println("Entrada: en1.equals(en2)? " + en1.equals(en2)); // true esperado
+        System.out.println("Entrada: en1.hashCode() == en2.hashCode()? " + (en1.hashCode() == en2.hashCode())); // true esperado
+
+        // ===========================
         // Mostrar estado general
+        // ===========================
         System.out.println(ticketek);
     }
 

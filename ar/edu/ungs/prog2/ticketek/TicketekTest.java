@@ -21,7 +21,7 @@ public class TicketekTest{
     private List<IEntrada> entradasJavierColdplay;
     @Before
     public void init() {
-    	ticketek = new Ticketek();
+        ticketek = new Ticketek();
 
         ticketek.registrarUsuario("nores@campus.ungs.edu.ar", "Jose", "Nores", "1234");
         ticketek.registrarUsuario("javierm@campus.ungs.edu.ar", "Javier", "Marenco", "1234");
@@ -102,7 +102,7 @@ public class TicketekTest{
         ticketek.agregarFuncion(nombre, "15/07/25", "Teatro Colón", 30000.0);
     }
 
-   
+
     @Test(expected = RuntimeException.class)
     public void ej04_venderEntradaTeatroContraseniaInvalida() {
         int[] asientos = { 10, 9, 1, 2 };
@@ -151,14 +151,14 @@ public class TicketekTest{
     
     @Test
     public void ej05_listarFuncionesDeEspectaculo() {
-       String espectaculo = "Ballet Clásico";
-       
-       String listado = ticketek.listarFunciones(espectaculo);
+        String espectaculo = "Ballet Clásico";
+        
+        String listado = ticketek.listarFunciones(espectaculo);
        // - (31/07/2025) Teatro Colón - Platea VIP: 30/50 | Platea Común: 60/70 | Platea Baja: 0/70 | Platea Alta: 50/50
 
-       String esperado = " - (01/03/25) Microestadio Sur - VIP: 0/50 | Comun: 0/100 | Baja: 4/150 | Alta: 0/200\n";
-       esperado += " - (25/07/25) Microestadio Sur - VIP: 0/50 | Comun: 0/100 | Baja: 0/150 | Alta: 0/200\n";
-       assertEquals(esperado, listado);
+        String esperado = " - (01/03/25) Microestadio Sur - VIP: 0/50 | Comun: 0/100 | Baja: 4/150 | Alta: 0/200\n";
+        esperado += " - (25/07/25) Microestadio Sur - VIP: 0/50 | Comun: 0/100 | Baja: 0/150 | Alta: 0/200\n";
+        assertEquals(esperado, listado);
     }
 
     // Refactorizar en base a los nuevos datos 

@@ -4,17 +4,18 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+// Representa una función (fecha y sede) de un espectáculo
 public class Funcion {
-    private LocalDate fecha;
-    private String sede;
-    private Sede sedeObj;
-    // En caso de que no se pase la sede como objeto, la guardamos como String
-    private double precioBase;
-    private String nombreEspectaculo;
+    private final LocalDate fecha;
+    private final String sede;
+    private final Sede sedeObj;
+    private final double precioBase;
+    private final String nombreEspectaculo;
     private double recaudacion = 0;
-    // por si necesitamos manejar asientos y sectores:
-    private Map<String, Integer> entradasPorSector = new HashMap<>();
-    private Map<String, boolean[]> asientosPorSector = new HashMap<>();
+    // Entradas vendidas por sector
+    private final Map<String, Integer> entradasPorSector = new HashMap<>();
+    // Mapa de asientos ocupados por sector (solo para sedes numeradas)
+    private final Map<String, boolean[]> asientosPorSector = new HashMap<>();
     
 
     public Funcion(LocalDate fecha, Sede sedeObj, double precioBase, String nombreEspectaculo) {
@@ -23,6 +24,12 @@ public class Funcion {
         this.sedeObj = sedeObj;
         this.precioBase = precioBase;
         this.nombreEspectaculo = nombreEspectaculo;
+
+        // Inicializar asientosPorSector usando polimorfismo
+        Map<String, Integer> capacidades = sedeObj.capacidadPorSector();
+        for (Map.Entry<String, Integer> entry : capacidades.entrySet()) {
+            asientosPorSector.put(entry.getKey(), new boolean[entry.getValue()]);
+        }
     }
 
     public String sede() { return sede; }
@@ -30,15 +37,13 @@ public class Funcion {
     public double recaudacion() { return recaudacion; }
     public LocalDate fecha() { return fecha; }
     public String nombreEspectaculo() { return nombreEspectaculo; }
-
     // para poder obtener la sede como objeto (requiere acceso a Ticketek o pasarla por constructor)
     public Sede sedeObj() { return sedeObj; }
     
-
-    // Simula la reserva de una entrada
+    
+    // Reserva una entrada en un sector y asiento (si corresponde)
     public void reservarEntrada(String sector, int asiento) {
-        recaudacion += precioBase; // O logica con sector/asiento
-        // para manejar los asientos
+        recaudacion += precioBase;
         if (sector != null) {
             entradasPorSector.put(sector, entradasPorSector.getOrDefault(sector, 0) + 1);
             if (asientosPorSector.containsKey(sector) && asiento >= 0) {
@@ -57,12 +62,14 @@ public class Funcion {
         return true; // Si no hay info, asumimos disponible
     }
 
+    // Devuelve la cantidad total de entradas vendidas
     public int getEntradasVendidas() {
         int total = 0;
         for (int vendidas : entradasPorSector.values()) total += vendidas;
         return total;
     }
 
+    // Devuelve la cantidad de entradas vendidas en un sector
     public int getEntradasVendidasPorSector(String sector) {
         return entradasPorSector.getOrDefault(sector, 0);
     }
@@ -91,69 +98,24 @@ public class Funcion {
     }
 
     public static void validarDatos(String nombreEspectaculo, String fecha, String sede, double precioBase) {
-        if (nombreEspectaculo == null || nombreEspectaculo.isEmpty()) {
-            throw new RuntimeException("El nombre del espectáculo no puede ser nulo o vacío");
-        }
-        if (nombreEspectaculo.length() < 3) {
-            throw new RuntimeException("El nombre del espectáculo debe tener al menos 3 caracteres");
-        }
-        if (fecha == null || fecha.isEmpty()) {
-            throw new RuntimeException("La fecha no puede ser nula o vacía");
-        }
-        if (sede == null || sede.isEmpty()) {
-            throw new RuntimeException("La sede no puede ser nula o vacía");
-        }
-        if (sede.length() < 3) {
-            throw new RuntimeException("El nombre de la sede debe tener al menos 3 caracteres");
-        }
-        if (precioBase <= 0) {
-            throw new RuntimeException("El precio base debe ser mayor a cero");
-        }
+        if (nombreEspectaculo == null || nombreEspectaculo.isEmpty()) throw new RuntimeException("El nombre del espectáculo no puede ser nulo o vacío");
+        if (nombreEspectaculo.length() < 3) throw new RuntimeException("El nombre del espectáculo debe tener al menos 3 caracteres");
+        if (fecha == null || fecha.isEmpty()) throw new RuntimeException("La fecha no puede ser nula o vacía");
+        if (sede == null || sede.isEmpty()) throw new RuntimeException("La sede no puede ser nula o vacía");
+        if (sede.length() < 3) throw new RuntimeException("El nombre de la sede debe tener al menos 3 caracteres");
+        if (precioBase <= 0) throw new RuntimeException("El precio base debe ser mayor a cero");
     }
     
-    public String descripcionParaListado(Sede sede, String fechaStr) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(" - (").append(fechaStr).append(") ").append(sede.nombreSede()).append(" - ");
-        if (sede instanceof Estadio estadio) {
-            int entradasVendidas = this.getEntradasVendidas();
-            sb.append(entradasVendidas).append("/").append(estadio.capacidadMaxima());
-        } else if (sede instanceof Teatro teatro) {
-            String[] sectores = teatro.sectores();
-            int[] capacidades = teatro.capacidadSectores();
-            for (int i = 0; i < sectores.length; i++) {
-                int vendidas = this.getEntradasVendidasPorSector(sectores[i]);
-                sb.append(sectores[i]).append(": ").append(vendidas).append("/").append(capacidades[i]);
-                if (i < sectores.length - 1) sb.append(" | ");
-            }
-        } else if (sede instanceof MiniEstadio mini) {
-            String[] sectores = mini.sectores();
-            int[] capacidades = mini.capacidadSectores();
-            for (int i = 0; i < sectores.length; i++) {
-                int vendidas = this.getEntradasVendidasPorSector(sectores[i]);
-                sb.append(sectores[i]).append(": ").append(vendidas).append("/").append(capacidades[i]);
-                if (i < sectores.length - 1) sb.append(" | ");
-            }
-        }
-        return sb.toString();
-    }
 
+    // Calcula el precio de una entrada en un sector
     public double calcularPrecioEntrada(String sector) {
-        Sede sede = this.sedeObj();
-        double base = this.precioBase();
-        int porcentaje = 0;
-        double adicional = 0;
-        if (sede instanceof Teatro teatro) {
-            porcentaje = teatro.porcentajeAdicional(sector);
-        } else if (sede instanceof MiniEstadio mini) {
-            porcentaje = mini.porcentajeAdicional(sector);
-            adicional = mini.precioConsumicion();
-        }
-        return base + base * porcentaje / 100.0 + adicional;
+        return sedeObj.calcularPrecioEntrada(sector, precioBase);
     }
 
+    // Libera un asiento si corresponde (usado al anular una entrada)
     public void liberarAsientoSiCorresponde(String sector, Integer asiento) {
-    if (sector != null && asiento != null) {
-        liberarAsiento(sector, asiento);
+        if (sector != null && asiento != null) {
+            liberarAsiento(sector, asiento);
+        }
     }
-}
 }

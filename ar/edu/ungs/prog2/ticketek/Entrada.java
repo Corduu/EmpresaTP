@@ -2,6 +2,7 @@ package ar.edu.ungs.prog2.ticketek;
 
 import java.time.LocalDate;
 
+// Representa una entrada comprada por un usuario para una función
 public class Entrada implements IEntrada {
     private LocalDate fecha;
     private String sector;
@@ -11,6 +12,7 @@ public class Entrada implements IEntrada {
     private Integer fila = null;
     private Integer asiento = null;
 
+    // Constructor para entradas generales o de sector
     public Entrada(LocalDate fecha, String sector, Espectaculo espectaculo, String codigoEntrada, String emailUsuario) {
     this.fecha = fecha;
     this.sector = sector;
@@ -26,48 +28,38 @@ public class Entrada implements IEntrada {
         this.asiento = asiento;
     }
 
-public boolean esDeCodigo(String codigo) { return codigoEntrada.equals(codigo); }
-public boolean esDeUsuario(String email) { return emailUsuario.equals(email); }
-public boolean esDeEspectaculo(String nombre) { return espectaculo != null && espectaculo.nombre().equals(nombre); }
-public boolean esDeFecha(LocalDate f) { return fecha.equals(f); }
-public boolean esDeSector(String s) { return sector != null && sector.equalsIgnoreCase(s); }
-public boolean esDeFila(Integer f) { return fila != null && fila.equals(f); }
-public boolean esDeAsiento(Integer a) { return asiento != null && asiento.equals(a); }
-public boolean esFutura(LocalDate hoy) { return fecha.isAfter(hoy); }
+    // Constructor para asientos numerados
+    public boolean esDeCodigo(String codigo) { return codigoEntrada.equals(codigo); }
+    public boolean esDeUsuario(String email) { return emailUsuario.equals(email); }
+    public boolean esDeEspectaculo(String nombre) { return espectaculo != null && espectaculo.nombre().equals(nombre); }
+    public boolean esDeFecha(LocalDate f) { return fecha.equals(f); }
+    public boolean esDeSector(String s) { return sector != null && sector.equalsIgnoreCase(s); }
+    public boolean esDeFila(Integer f) { return fila != null && fila.equals(f); }
+    public boolean esDeAsiento(Integer a) { return asiento != null && asiento.equals(a); }
+    public boolean esFutura(LocalDate hoy) { return !fecha.isBefore(hoy); }
 
-// para buscar por código, usuario o espectaculo
-public String codigo() { return codigoEntrada; } 
-public String usuario() { return emailUsuario; }
-public Espectaculo espectaculo() { return espectaculo; }
-public LocalDate fecha() { return fecha; }
-public String sector() { return sector; }
-public Integer asiento() { return asiento; }
+    // para buscar por código, usuario o espectaculo
+    public String codigo() { return codigoEntrada; } 
+    public String usuario() { return emailUsuario; }
+    public Espectaculo espectaculo() { return espectaculo; }
+    public LocalDate fecha() { return fecha; }
+    public String sector() { return sector; }
+    public Integer asiento() { return asiento; }
 
 
+    // Calcula el precio de la entrada usando la función correspondiente
     @Override
     public double precio() {
         if (espectaculo != null && fecha != null) {
-            Funcion funcion = espectaculo.getFunciones().get(fecha);
+            Funcion funcion = espectaculo.funcionEnFecha(fecha);
             if (funcion != null) {
-                double base = funcion.precioBase();
-                // Si es estadio, solo precio base
-                if (sector == null || sector.equalsIgnoreCase("CAMPO")) return base;
-                // Si es teatro/miniestadio, sumar porcentaje adicional
-                Sede sede = funcion.sedeObj();
-                int porcentaje = 0;
-                double consumicion = 0;
-                if (sede instanceof Teatro) {
-                    porcentaje = ((Teatro) sede).porcentajeAdicional(sector);
-                } else if (sede instanceof MiniEstadio) {
-                    porcentaje = ((MiniEstadio) sede).porcentajeAdicional(sector);
-                    consumicion = ((MiniEstadio) sede).precioConsumicion();
-                }
-                return base + base * porcentaje / 100.0 + consumicion;
+                return funcion.calcularPrecioEntrada(sector);
             }
         }
         return 0;
     }
 
+    // Devuelve la ubicación de la entrada (CAMPO o sector y asiento)
     @Override
     public String ubicacion() {
         if (sector == null || sector.equalsIgnoreCase("CAMPO")) return "CAMPO";
@@ -80,19 +72,36 @@ public Integer asiento() { return asiento; }
         return ubic;
     }
 
+    // Formato de string de la entrada (usado en listados y tests)
     @Override
     public String toString() {
         String fechaStr = fecha != null ? fecha.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yy")) : "";
-        if (fecha != null && fecha.isBefore(LocalDate.now())) fechaStr += " P";
+        boolean pasada = fecha != null && fecha.isBefore(LocalDate.now());
+        if (pasada) fechaStr += " P";
         String sedeNombre = "";
         if (espectaculo != null && fecha != null) {
-            Funcion f = espectaculo.getFunciones().get(fecha);
+            Funcion f = espectaculo.funcionEnFecha(fecha);
             if (f != null) sedeNombre = f.sede();
         }
         return codigoEntrada + " - " +
                 (espectaculo != null ? espectaculo.nombre() : "") + " - " +
                 fechaStr + " - " +
                 sedeNombre + " - " +
-                ubicacion();
+                ubicacion() +
+                " - $" + String.format("%.2f", precio());
+    }
+
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Entrada entrada = (Entrada) o;
+        return codigoEntrada.equals(entrada.codigoEntrada);
+    }
+
+    @Override
+    public int hashCode() {
+        return codigoEntrada.hashCode();
     }
 }
