@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -176,11 +177,19 @@ public class Ticketek implements ITicketek {
         return sb.toString();
     }
 
+
     @Override
     public List<IEntrada> listarEntradasEspectaculo(String nombreEspectaculo) { 
         List<IEntrada> entradas = new ArrayList<>();
         for (Usuario usuario : usuarios.values()) {
-            entradas.addAll(usuario.entradasDeEspectaculo(nombreEspectaculo));
+            // Usamos Iterator para recorrer las entradas del usuario
+            Iterator<Entrada> it = usuario.todasLasEntradas().iterator();
+            while (it.hasNext()) {
+                Entrada entrada = it.next();
+                if (entrada.espectaculo().nombre().equals(nombreEspectaculo)) {
+                    entradas.add(entrada);
+                }
+            }
         }
         return entradas;
     }
